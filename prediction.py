@@ -3,6 +3,35 @@ import joblib
 import numpy as np
 import pandas as pd
 
+from huggingface_hub import snapshot_download
+
+def predict_crop_yield1(df, encoded_final, ohe_loaded):
+    # Load the model directly from Hugging Face (without downloading manually)
+    # model_rf = joblib.load(snapshot_download("abatejemal/crop_model", filename="cereals_rf.pkl"))
+    model_dir = snapshot_download("abatejemal/crop_model")
+    model_rf = joblib.load(f'{model_dir}/cereals_rf.pkl')
+    
+    # Make predictions
+    predictions = model_rf.predict(df)
+
+    # Decode 'crop' and 'season' columns back to original values
+    decoded = ohe_loaded.inverse_transform(encoded_final)
+    decoded1 = pd.DataFrame(decoded)
+    decoded1.columns = ['crop', 'season']
+    
+    # Create the final DataFrame with relevant features and predictions
+    final_result = pd.concat([df[['area(sq.m)', 
+                   'GWETPROF', 'GWETTOP', 'GWETROOT', 'CLOUD_AMT', 
+                   'TS', 'PS', 'RH2M', 'QV2M', 'PRECTOTCORR', 'T2M_MAX', 
+                   'T2M_MIN', 'T2M_RANGE', 'WS2M', 'elevation', 'slope', 'soc', 'soilph',
+                               ]], decoded1], axis=1)
+    
+    # Add predicted values to the DataFrame
+    final_result['Predicted'] = predictions
+
+    # Return the DataFrame sorted by predictions
+    return final_result.sort_values(by=['Predicted'], ascending=False)
+
 
 
 def predict_crop_yield(df, encoded_final, ohe_loaded):
