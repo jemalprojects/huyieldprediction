@@ -3,6 +3,8 @@ import joblib
 import numpy as np
 import pandas as pd
 
+
+
 def predict_crop_yield(df, encoded_final, ohe_loaded):
     # Load pre-trained model
     model_rf = joblib.load('3_Models/yield_models/cereals_rf.pkl')
@@ -35,7 +37,7 @@ def predict_next_30_days(model_path, scaler_path, data_scaled, time_steps, days,
     for _ in range(days):
         # input_data = current_data.reshape((1, time_steps, data_scaled.shape[1]))
         input_data = np.reshape(current_data, (1, time_steps, data_scaled.shape[1]))
-        predicted = model.predict(input_data)
+        predicted = model.predict(input_data, verbose=0)
         # predicted = scaler.inverse_transform(predicted_scaled)
         pred = scaler.inverse_transform(predicted)
         predictions.append(pred[0])
