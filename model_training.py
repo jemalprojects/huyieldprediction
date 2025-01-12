@@ -83,7 +83,7 @@ def build_model(input_shape):
 def retrain_model_function(district_selected, dataset_paths):
     # Define GitHub variables
     token = st.secrets["GITHUB_TOKEN"]
-    repo = "Jemal-Abate/cropyield"  # Replace with your repository
+    repo = "jemalprojects/huyieldprediction"  # Replace with your repository
     commit_message_template = "Uploading {file_name} for district {district}"
 
     
