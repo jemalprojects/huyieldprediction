@@ -83,7 +83,7 @@ def build_model(input_shape):
 def retrain_model_function(district_selected, dataset_paths):
     # Define GitHub variables
     token = st.secrets["GITHUB_TOKEN"]
-    repo = "Jemal-Abate/cropyield"  # Replace with your repository
+    repo = "jemalprojects/huyieldprediction"  # Replace with your repository
     commit_message_template = "Uploading {file_name} for district {district}"
 
     
@@ -135,7 +135,7 @@ def retrain_model_function(district_selected, dataset_paths):
         model = build_model((time_steps, X.shape[2]))
         early_stopping = EarlyStopping(monitor="val_loss", patience=10, restore_best_weights=True)
 
-        total_epoch = 20
+        total_epoch = 1
         # progress_bar = st.progress(perc, text=f"{district} ({int(perc)}%)")
         progress_bar = st.progress(0, text=f"{district} (0%)")
         def on_epoch_end(epoch, logs):
