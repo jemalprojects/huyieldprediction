@@ -23,9 +23,12 @@ import time
 import math
 import data_processing
 import prediction
+from PIL import Image
+icon = Image.open("icons.png")
 st.set_page_config(
     page_title="Crop Yield Prediction",
-    page_icon="🌾",
+    # page_icon="🌾",
+    page_icon=icon,
     layout="wide"
 )
 st.markdown('''
