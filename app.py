@@ -24,6 +24,8 @@ import math
 import data_processing
 import prediction
 from PIL import Image
+
+
 icon = Image.open("icons.png")
 st.set_page_config(
     page_title="Crop Yield Prediction",
@@ -38,6 +40,14 @@ st.markdown('''
 }
 </style>
 ''', unsafe_allow_html=True)
+hide_st_text = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_st_text, unsafe_allow_html=True)
 ohe_loaded = joblib.load('3_Models/transform_ohe.pkl')
 df = pd.read_csv('bbox_and_commons.csv')
 districts = df['district'].tolist()
