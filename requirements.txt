@@ -7,4 +7,4 @@ pandas==2.2.3
 plotly==5.9.0
 streamlit==1.41.1
 huggingface_hub
-Pillow=10.2.0
+Pillow==10.2.0
