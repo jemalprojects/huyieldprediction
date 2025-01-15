@@ -89,7 +89,7 @@ def upload_model_to_huggingface(model, model_filename, private=False):
     token = st.secrets["huggingface_TOKEN"]
     # Log in to Hugging Face
     login(token=token)
-    repo_name = "random-forest-regressor"
+    repo_name = "3_Models"
     username = "abatejemal"
 
     # Create a repository on Hugging Face Hub (if it doesn't exist)
@@ -166,7 +166,7 @@ def retrain_model_function(district_selected, dataset_paths):
         model = build_model((time_steps, X.shape[2]))
         early_stopping = EarlyStopping(monitor="val_loss", patience=10, restore_best_weights=True)
 
-        total_epoch = 1
+        total_epoch = 10
         # progress_bar = st.progress(perc, text=f"{district} ({int(perc)}%)")
         progress_bar = st.progress(0, text=f"{district} (0%)")
         def on_epoch_end(epoch, logs):
