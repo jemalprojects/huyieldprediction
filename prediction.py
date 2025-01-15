@@ -34,27 +34,27 @@ def predict_crop_yield1(df, encoded_final, ohe_loaded):
 
 
 
-def predict_crop_yield(df, encoded_final, ohe_loaded):
-    # Load pre-trained model
-    model_rf = joblib.load('3_Models/yield_models/cereals_rf.pkl')
-    # Make predictions
-    predictions = model_rf.predict(df)
+# def predict_crop_yield(df, encoded_final, ohe_loaded):
+    # # Load pre-trained model
+    # model_rf = joblib.load('3_Models/yield_models/cereals_rf.pkl')
+    # # Make predictions
+    # predictions = model_rf.predict(df)
 
-    # Decode 'crop' and 'season' columns back to original values
-    decoded = ohe_loaded.inverse_transform(encoded_final)
-    decoded1=pd.DataFrame(decoded)
-    decoded1.columns=['crop', 'season']
-    final_result = pd.concat([df[['area(sq.m)', 
-                   'GWETPROF', 'GWETTOP', 'GWETROOT', 'CLOUD_AMT', 
-                   'TS', 'PS', 'RH2M', 'QV2M', 'PRECTOTCORR', 'T2M_MAX', 
-                   'T2M_MIN', 'T2M_RANGE', 'WS2M', 'elevation', 'slope', 'soc', 'soilph',
-                               ]], decoded1], axis=1)
+    # # Decode 'crop' and 'season' columns back to original values
+    # decoded = ohe_loaded.inverse_transform(encoded_final)
+    # decoded1=pd.DataFrame(decoded)
+    # decoded1.columns=['crop', 'season']
+    # final_result = pd.concat([df[['area(sq.m)', 
+                   # 'GWETPROF', 'GWETTOP', 'GWETROOT', 'CLOUD_AMT', 
+                   # 'TS', 'PS', 'RH2M', 'QV2M', 'PRECTOTCORR', 'T2M_MAX', 
+                   # 'T2M_MIN', 'T2M_RANGE', 'WS2M', 'elevation', 'slope', 'soc', 'soilph',
+                               # ]], decoded1], axis=1)
     
-    # Add predicted values to DataFrame
-    final_result['Predicted'] = predictions
+    # # Add predicted values to DataFrame
+    # final_result['Predicted'] = predictions
 
-    # Return the DataFrame sorted by predictions
-    return final_result.sort_values(by=['Predicted'], ascending=False)
+    # # Return the DataFrame sorted by predictions
+    # return final_result.sort_values(by=['Predicted'], ascending=False)
     
 # def predict_next_30_days(model_path, scaler_path, data_scaled, time_steps, days, progress_bar=None):
 #     model = load_model(model_path)
