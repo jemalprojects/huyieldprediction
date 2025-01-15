@@ -166,7 +166,7 @@ def retrain_model_function(district_selected, dataset_paths):
         model = build_model((time_steps, X.shape[2]))
         early_stopping = EarlyStopping(monitor="val_loss", patience=10, restore_best_weights=True)
 
-        total_epoch = 10
+        total_epoch = 1
         # progress_bar = st.progress(perc, text=f"{district} ({int(perc)}%)")
         progress_bar = st.progress(0, text=f"{district} (0%)")
         def on_epoch_end(epoch, logs):
@@ -220,10 +220,10 @@ def retrain_model_function(district_selected, dataset_paths):
         model_repo_path = model_save_path
         # scaler_repo_path = f"models/{district}_scaler.pkl"
         scaler_repo_path = scaler_save_path
-        model_filename=model_save_path
+        model_filename=f"weather_models/{district}_lstm_model.h5"
         upload_model_to_huggingface(model, model_filename)
-        model_filename=scaler_save_path
-        upload_model_to_huggingface(model, model_filename)
+        scaler_filename=f"weather_models/{district}_scaler.pkl"
+        upload_model_to_huggingface(scaler, scaler_filename)
         # upload_to_github(model_save_path, model_repo_path, commit_message_template.format(file_name="model", district=district))
         # upload_to_github(scaler_save_path, scaler_repo_path, commit_message_template.format(file_name="scaler", district=district))
 
