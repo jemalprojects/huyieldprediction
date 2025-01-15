@@ -24,6 +24,7 @@ import math
 import data_processing
 import prediction
 from PIL import Image
+from huggingface_hub import snapshot_download
 
 
 icon = Image.open("icons.png")
@@ -48,7 +49,9 @@ hide_st_text = """
             </style>
             """
 st.markdown(hide_st_text, unsafe_allow_html=True)
-ohe_loaded = joblib.load('3_Models/transform_ohe.pkl')
+# ohe_loaded = joblib.load('3_Models/transform_ohe.pkl')
+path = snapshot_download("abatejemal/3_Models")
+ohe_loaded = joblib.load(f'{path}/transform_ohe.pkl')
 df = pd.read_csv('bbox_and_commons.csv')
 districts = df['district'].tolist()
 # Folder containing district CSV files
