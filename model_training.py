@@ -77,7 +77,38 @@ def build_model(input_shape):
     # return model, scaler
 
 
+import joblib
+from huggingface_hub import HfApi, upload_file, login
+import io
 
+def upload_model_to_huggingface(model, model_filename="random_forest_model1.pkl", private=False):
+    # Serialize the trained model to a BytesIO object (in-memory storage)
+    model_io = io.BytesIO()
+    joblib.dump(model, model_io)
+    model_io.seek(0)  # Reset the pointer to the beginning of the BytesIO object
+    token = st.secrets["huggingface_TOKEN"]
+    # Log in to Hugging Face
+    login(token=token)
+    repo_name = "random-forest-regressor"
+    username = "abatejemal"
+
+    # Create a repository on Hugging Face Hub (if it doesn't exist)
+    # api = HfApi()
+    # api.create_repo(repo_name, private=private)  # Set private=True if you want a private repo
+
+    # Upload the model directly to the Hugging Face repository
+    upload_file(
+        path_or_fileobj=model_io,  # Pass the in-memory model object
+        path_in_repo=model_filename,  # Path where the file will be stored in the repo
+        repo_id=f"{username}/{repo_name}",  # Replace 'your_username' with your Hugging Face username
+        repo_type="model",  # Specify that it's a model
+    )
+
+    print(f"Model uploaded successfully to https://huggingface.co/{username}/{repo_name}")
+
+
+
+# upload_model_to_huggingface(regressor_rf, repo_name, token, username)
 
 
 def retrain_model_function(district_selected, dataset_paths):
@@ -189,6 +220,7 @@ def retrain_model_function(district_selected, dataset_paths):
         model_repo_path = model_save_path
         # scaler_repo_path = f"models/{district}_scaler.pkl"
         scaler_repo_path = scaler_save_path
+        upload_model_to_huggingface(model, repo_name, username)
         upload_to_github(model_save_path, model_repo_path, commit_message_template.format(file_name="model", district=district))
         upload_to_github(scaler_save_path, scaler_repo_path, commit_message_template.format(file_name="scaler", district=district))
 
