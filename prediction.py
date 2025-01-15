@@ -56,9 +56,34 @@ def predict_crop_yield(df, encoded_final, ohe_loaded):
     # Return the DataFrame sorted by predictions
     return final_result.sort_values(by=['Predicted'], ascending=False)
     
-def predict_next_30_days(model_path, scaler_path, data_scaled, time_steps, days, progress_bar=None):
+# def predict_next_30_days(model_path, scaler_path, data_scaled, time_steps, days, progress_bar=None):
+#     model = load_model(model_path)
+#     scaler = joblib.load(scaler_path)
+
+#     predictions = []
+#     current_data = data_scaled[-time_steps:]  # Use the most recent data to start
+
+#     for _ in range(days):
+#         # input_data = current_data.reshape((1, time_steps, data_scaled.shape[1]))
+#         input_data = np.reshape(current_data, (1, time_steps, data_scaled.shape[1]))
+#         predicted = model.predict(input_data, verbose=0)
+#         # predicted = scaler.inverse_transform(predicted_scaled)
+#         pred = scaler.inverse_transform(predicted)
+#         predictions.append(pred[0])
+#         # current_data = np.vstack([current_data[1:], pred])
+#         current_data = np.append(current_data[1:], predicted, axis=0)
+
+#         if progress_bar:
+#             progress_bar.progress((_ + 1) / days, text="Predicting, please wait...")  # Update progress bar
+#     progress_bar.empty()
+    
+#     return np.array(predictions)
+
+def predict_next_30_days(model_path, scaler_path, data_scaled, time_steps, days, progress_bar=None, district):
     model = load_model(model_path)
-    scaler = joblib.load(scaler_path)
+    # scaler = joblib.load(scaler_path)
+    scaler_path = snapshot_download("abatejemal/3_Models/weather_models")
+    scaler = joblib.load(f'{scaler_path}/{district}_scaler.pkl')
 
     predictions = []
     current_data = data_scaled[-time_steps:]  # Use the most recent data to start
