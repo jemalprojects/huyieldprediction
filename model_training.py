@@ -220,9 +220,9 @@ def retrain_model_function(district_selected, dataset_paths):
         model_repo_path = model_save_path
         # scaler_repo_path = f"models/{district}_scaler.pkl"
         scaler_repo_path = scaler_save_path
-        upload_model_to_huggingface(model, repo_name, username)
-        upload_to_github(model_save_path, model_repo_path, commit_message_template.format(file_name="model", district=district))
-        upload_to_github(scaler_save_path, scaler_repo_path, commit_message_template.format(file_name="scaler", district=district))
+        upload_model_to_huggingface(model)
+        # upload_to_github(model_save_path, model_repo_path, commit_message_template.format(file_name="model", district=district))
+        # upload_to_github(scaler_save_path, scaler_repo_path, commit_message_template.format(file_name="scaler", district=district))
 
         progress_bar.empty()
         
