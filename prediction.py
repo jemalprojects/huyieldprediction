@@ -79,7 +79,7 @@ def predict_crop_yield(df, encoded_final, ohe_loaded):
     
 #     return np.array(predictions)
 
-def predict_next_30_days(model_path, scaler_path, data_scaled, time_steps, days, progress_bar=None, district):
+def predict_next_30_days(model_path, district, scaler_path, data_scaled, time_steps, days, progress_bar=None):
     model = load_model(model_path)
     # scaler = joblib.load(scaler_path)
     scaler_path = snapshot_download("abatejemal/3_Models/weather_models")
