@@ -151,7 +151,7 @@ elif choose == "Make Prediction":
                     scaler = joblib.load(scaler_paths)
                     data_scaled = scaler.transform(data)
                     
-                    predictions = prediction.predict_next_30_days(model_paths, scaler_paths, data_scaled, time_steps, days=90, progress_bar=progress_bar, district_selected)
+                    predictions = prediction.predict_next_30_days(model_paths, district_selected, scaler_paths, data_scaled, time_steps, days=90, progress_bar=progress_bar)
 
                     # Convert predictions to DataFrame
                     predicted_df = pd.DataFrame(predictions, columns=['GWETPROF', 'GWETTOP', 'GWETROOT', 'CLOUD_AMT', 'TS', 'PS', 'RH2M', 'QV2M', 'PRECTOTCORR', 'T2M_MAX', 'T2M_MIN', 'T2M_RANGE', 'WS2M'])
