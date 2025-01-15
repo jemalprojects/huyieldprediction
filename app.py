@@ -177,6 +177,7 @@ elif choose == "Make Prediction":
                     # final_df = pd.concat([mean_row, filtered_df], ignore_index=True)
                     # st.write(final_df.round(2))
                     # st.write(mean_row.round(2))
+                    
                     important_columns=['season','crop', 'area(sq.m)', 'GWETPROF', 'GWETTOP', 'GWETROOT', 'CLOUD_AMT', 'TS', 'PS', 'RH2M', 'QV2M', 'PRECTOTCORR', 'T2M_MAX', 'T2M_MIN', 'T2M_RANGE', 'WS2M', 'elevation', 'slope', 'soc', 'soilph']
                     ch=pd.DataFrame()
                     crop_categories = ohe_loaded.categories_[0] 
