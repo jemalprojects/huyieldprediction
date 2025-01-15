@@ -81,7 +81,7 @@ import joblib
 from huggingface_hub import HfApi, upload_file, login
 import io
 
-def upload_model_to_huggingface(model, model_filename="random_forest_model1.pkl", private=False):
+def upload_model_to_huggingface(model, model_filename, private=False):
     # Serialize the trained model to a BytesIO object (in-memory storage)
     model_io = io.BytesIO()
     joblib.dump(model, model_io)
@@ -166,7 +166,7 @@ def retrain_model_function(district_selected, dataset_paths):
         model = build_model((time_steps, X.shape[2]))
         early_stopping = EarlyStopping(monitor="val_loss", patience=10, restore_best_weights=True)
 
-        total_epoch = 10
+        total_epoch = 1
         # progress_bar = st.progress(perc, text=f"{district} ({int(perc)}%)")
         progress_bar = st.progress(0, text=f"{district} (0%)")
         def on_epoch_end(epoch, logs):
@@ -220,7 +220,10 @@ def retrain_model_function(district_selected, dataset_paths):
         model_repo_path = model_save_path
         # scaler_repo_path = f"models/{district}_scaler.pkl"
         scaler_repo_path = scaler_save_path
-        upload_model_to_huggingface(model)
+        model_filename=model_save_path
+        upload_model_to_huggingface(model, model_filename)
+        model_filename=scaler_save_path
+        upload_model_to_huggingface(model, model_filename)
         # upload_to_github(model_save_path, model_repo_path, commit_message_template.format(file_name="model", district=district))
         # upload_to_github(scaler_save_path, scaler_repo_path, commit_message_template.format(file_name="scaler", district=district))
 
