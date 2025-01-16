@@ -276,7 +276,7 @@ elif choose == "Retrain Model":
                 st.session_state.processing = True
                 button_placeholder.empty()  # Hide the button during task
                 # with st.spinner("Please Wait, Training Model..."):
-                with st.status("Please Wait, Training Model..."):
+                with st.status("Please Wait, Training Model...", expanded=True):
                     model_training.retrain_model_function(district_selected, dataset_paths)
                     st.session_state.processing = False  # Reset the processing flag
                     button_placeholder.button("Retrain", key="run_task_button_complete")
