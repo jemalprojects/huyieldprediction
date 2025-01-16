@@ -80,13 +80,14 @@ def predict_crop_yield1(df, encoded_final, ohe_loaded):
 #     return np.array(predictions)
 
 # def predict_next_30_days(model_path, district, scaler_path, data_scaled, time_steps, days, progress_bar=None):
-def predict_next_30_days(model_path, district, scaler_path, data, time_steps, days, progress_bar=None):
+def predict_next_30_days(district, data, time_steps, days, progress_bar=None):
     # model = load_model(model_path)
     # scaler = joblib.load(scaler_path)
     path = snapshot_download("abatejemal/3_Models")
     scaler = joblib.load(f'{path}/weather_models/{district}_scaler.pkl')
     # model_path = snapshot_download("abatejemal/3_Models")
-    model = joblib.load(f'{path}/weather_models/{district}_lstm_model.pkl')
+    model = joblib.load(f'{path}/weather_models/{district}_lstm_model.h5')
+    # model = load_model(f'{path}/weather_models/{district}_lstm_model.h5')
     data_scaled = scaler.transform(data)
     predictions = []
     current_data = data_scaled[-time_steps:]  # Use the most recent data to start
