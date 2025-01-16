@@ -10,3 +10,7 @@ customMenuItems = false # Removes extra menu items.
 
 [global]
 showFooter = false
+
+[server]
+# Set the maximum idle time (in seconds) before a session expires
+maxSessionIdleTimeout = 3600  # Example: 1 hour timeout
