@@ -27,7 +27,6 @@ import prediction
 from PIL import Image
 from huggingface_hub import snapshot_download
 
-
 icon = Image.open("icons.png")
 st.set_page_config(
     page_title="Crop Yield Prediction",
@@ -155,7 +154,7 @@ elif choose == "Make Prediction":
                 # scaler = joblib.load(scaler_paths)
                 # data_scaled = scaler.transform(data)
                 
-                predictions = prediction.predict_next_30_days(model_paths, district_selected, scaler_paths, data, time_steps, days=90, progress_bar=progress_bar)
+                predictions = prediction.predict_next_30_days(district_selected, data, time_steps, days=90, progress_bar=progress_bar)
 
                 # Convert predictions to DataFrame
                 predicted_df = pd.DataFrame(predictions, columns=['GWETPROF', 'GWETTOP', 'GWETROOT', 'CLOUD_AMT', 'TS', 'PS', 'RH2M', 'QV2M', 'PRECTOTCORR', 'T2M_MAX', 'T2M_MIN', 'T2M_RANGE', 'WS2M'])
