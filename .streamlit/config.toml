@@ -1,15 +1,15 @@
 [theme]
 base="light"
 
-[browser]
-gatherUsageStats = false
+# [browser]
+# gatherUsageStats = false
 
-[ui]
-hideSidebarNav = false  # Optionally hide the sidebar navigation.
-customMenuItems = false # Removes extra menu items.
+# [ui]
+# hideSidebarNav = false  # Optionally hide the sidebar navigation.
+# customMenuItems = false # Removes extra menu items.
 
-[global]
-showFooter = false
+# [global]
+# showFooter = false
 
 [server]
 # Set the maximum idle time (in seconds) before a session expires
