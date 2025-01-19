@@ -36,21 +36,21 @@ st.set_page_config(
     page_icon=icon,
     layout="wide"
 )
-# st.markdown('''
-# <style>
-# .stApp [data-testid="stToolbar"]{
-#     display:none;
-# }
-# </style>
-# ''', unsafe_allow_html=True)
-# hide_st_text = """
-#             <style>
-#             #MainMenu {visibility: hidden;}
-#             footer {visibility: hidden;}
-#             header {visibility: hidden;}
-#             </style>
-#             """
-# st.markdown(hide_st_text, unsafe_allow_html=True)
+st.markdown('''
+<style>
+.stApp [data-testid="stToolbar"]{
+    display:none;
+}
+</style>
+''', unsafe_allow_html=True)
+hide_st_text = """
+            <style>
+            #MainMenu {visibility: hidden;}
+            footer {visibility: hidden;}
+            header {visibility: hidden;}
+            </style>
+            """
+st.markdown(hide_st_text, unsafe_allow_html=True)
 # ohe_loaded = joblib.load('3_Models/transform_ohe.pkl')
 path = snapshot_download("abatejemal/3_Models")
 ohe_loaded = joblib.load(f'{path}/transform_ohe.pkl')
