@@ -106,21 +106,22 @@ elif choose == "Make Prediction":
         # for district, dataset_path in zip(district_selected, dataset_paths):
         
         district=district_selected
-        dataset_paths = f"2_Data/WeatherData/{district}.csv"
+        # dataset_paths = f"2_Data/WeatherData/{district}.csv"
+        dataset_paths =f"https://huggingface.co/datasets/abatejemal/2_Data/resolve/main/WeatherData/{district}.csv"
         dataset_path=dataset_paths
         model_paths = f"3_Models/weather_models/{district}_lstm_model.h5"
         scaler_paths = f"3_Models/weather_models/{district}_scaler.pkl"
-        if os.path.exists(dataset_path):
+        # if os.path.exists(dataset_path):
             
-            data = pd.read_csv(dataset_path)
-            data['date'] = pd.to_datetime(data['date'])
-            data.set_index('date', inplace=True)
-            numeric_columns = ['GWETPROF', 'GWETTOP', 'GWETROOT', 'CLOUD_AMT', 'TS', 'PS', 'RH2M', 'QV2M', 'PRECTOTCORR', 'T2M_MAX', 'T2M_MIN', 'T2M_RANGE', 'WS2M']
-            data = data[numeric_columns].dropna()
-            
-            data = data_processing.fill_outliers_with_median(data)
-        else:
-            st.write(f"No dataset found for {district}. Please check the file path.")
+        data = pd.read_csv(dataset_path)
+        data['date'] = pd.to_datetime(data['date'])
+        data.set_index('date', inplace=True)
+        numeric_columns = ['GWETPROF', 'GWETTOP', 'GWETROOT', 'CLOUD_AMT', 'TS', 'PS', 'RH2M', 'QV2M', 'PRECTOTCORR', 'T2M_MAX', 'T2M_MIN', 'T2M_RANGE', 'WS2M']
+        data = data[numeric_columns].dropna()
+        
+        data = data_processing.fill_outliers_with_median(data)
+        # else:
+            # st.write(f"No dataset found for {district}. Please check the file path.")
         selected_season = st.selectbox(
         "SELECT SEASON",
         ("Meher", "Belg"),
