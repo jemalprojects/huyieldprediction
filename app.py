@@ -26,8 +26,6 @@ import model_training
 import prediction
 from PIL import Image
 from huggingface_hub import snapshot_download
-from concurrent.futures import ThreadPoolExecutor
-executor = ThreadPoolExecutor(max_workers=1)
 
 icon = Image.open("icons.png")
 st.set_page_config(
@@ -36,21 +34,21 @@ st.set_page_config(
     page_icon=icon,
     layout="wide"
 )
-st.markdown('''
-<style>
-.stApp [data-testid="stToolbar"]{
-    display:none;
-}
-</style>
-''', unsafe_allow_html=True)
-hide_st_text = """
-            <style>
-            #MainMenu {visibility: hidden;}
-            footer {visibility: hidden;}
-            header {visibility: hidden;}
-            </style>
-            """
-st.markdown(hide_st_text, unsafe_allow_html=True)
+# st.markdown('''
+# <style>
+# .stApp [data-testid="stToolbar"]{
+    # display:none;
+# }
+# </style>
+# ''', unsafe_allow_html=True)
+# hide_st_text = """
+            # <style>
+            # #MainMenu {visibility: hidden;}
+            # footer {visibility: hidden;}
+            # header {visibility: hidden;}
+            # </style>
+            # """
+# st.markdown(hide_st_text, unsafe_allow_html=True)
 # ohe_loaded = joblib.load('3_Models/transform_ohe.pkl')
 path = snapshot_download("abatejemal/3_Models")
 ohe_loaded = joblib.load(f'{path}/transform_ohe.pkl')
@@ -60,7 +58,7 @@ districts = df['district'].tolist()
 data_folder = "2_Data/WeatherData/"
 time_steps = 365  # Sequence length
 with st.sidebar:
-    choose = option_menu("MENU", ["Home", "Make Prediction", "Retrain Model", "Learn", "Contact"],
+    choose = option_menu("MENU", ["Home", "Make Prediction", "Retrain Model", "Update Datasets", "Learn"],
                          icons=['house', 'kanban', 'book','person lines fill'],
                          menu_icon="app-indicator", default_index=0,
                          styles={
@@ -230,42 +228,61 @@ elif choose == "Learn":
     </style> """, unsafe_allow_html=True)
     st.markdown('<p class="font">Learn Python for Data Science</p>', unsafe_allow_html=True)
 
-elif choose == "Contact":
-    st.subheader("Contact System Admin", divider=True)
-    st.markdown(""" <style> .font {
-    font-size:35px ; font-family: 'Cooper Black'; color: #FF9633;} 
-    </style> """, unsafe_allow_html=True)
-    st.markdown('<p class="font">Contact Form</p>', unsafe_allow_html=True)
-    with st.form(key='columns_in_form2',clear_on_submit=True): #set clear_on_submit=True so that the form will be reset/cleared once it's submitted
-        #st.write('Please help us improve!')
-        Name=st.text_input(label='Please Enter Your Name') #Collect user feedback
-        Email=st.text_input(label='Please Enter Your Email') #Collect user feedback
-        Message=st.text_input(label='Please Enter Your Message') #Collect user feedback
-        submitted = st.form_submit_button('Submit')
-        if submitted:
-            st.write('Thanks for your contacting us. We will respond to your questions or inquiries as soon as possible!')
+elif choose == "Update Datasets":
+    st.subheader("Update Datasets", divider=True)
+    if "processing" not in st.session_state:
+        st.session_state.processing = False
+    # Create a placeholder for the button
+    button_placeholder = st.empty()
+    
+    # Show the button only if not processing
+    if not st.session_state.processing:
+        if button_placeholder.button("Update", key="run_task_button_visible"):
+            st.session_state.processing = True
+            button_placeholder.empty()
+            with st.status("Please Wait, Updating...", expanded=True) as status:
+                import district_level_download
+                district_level_download.main()
+                st.session_state.processing = False  # Reset the processing flag
+                
+                status.update(label="Update complete!", state="complete", expanded=True)
+                button_placeholder.button("Update", key="run_task_button_complete")
 
 
 # Retrain model section
 elif choose == "Retrain Model":
+    from huggingface_hub import snapshot_download
     st.subheader("Retrain Model Interface", divider=True)
     district_selected = st.multiselect("Select Districts", districts)
-    dataset_paths = [f"2_Data/WeatherData/{district}.csv" for district in district_selected]
-    model_paths = [f"3_Models/weather_models/{district}_lstm_model.h5" for district in district_selected]
-    scaler_paths = [f"3_Models/weather_models/{district}_scaler.pkl" for district in district_selected]
+    # url=f"https://huggingface.co/datasets/abatejemal/2_Data/resolve/main/WeatherData/{district}.csv"
+    # dataset_paths = [f"2_Data/WeatherData/{district}.csv" for district in district_selected]
+    dataset_paths = [f"https://huggingface.co/datasets/abatejemal/2_Data/resolve/main/WeatherData/{district}.csv" for district in district_selected]
+
+    
+    # dataset_paths = [f"{path1}/{district}.csv" for district in district_selected]
+    # model_paths = [f"3_Models/weather_models/{district}_lstm_model.h5" for district in district_selected]
+    # scaler_paths = [f"3_Models/weather_models/{district}_scaler.pkl" for district in district_selected]
     # Load dataset if districts are selected
+    
     if district_selected:
         for district, dataset_path in zip(district_selected, dataset_paths):
-            if os.path.exists(dataset_path):
-                
-                data = pd.read_csv(dataset_path)
-                data['date'] = pd.to_datetime(data['date'])
-                data.set_index('date', inplace=True)
-                numeric_columns = ['GWETPROF', 'GWETTOP', 'GWETROOT', 'CLOUD_AMT', 'TS', 'PS', 'RH2M', 'QV2M', 'PRECTOTCORR', 'T2M_MAX', 'T2M_MIN', 'T2M_RANGE', 'WS2M']
-                data = data[numeric_columns].dropna()
-                data = data_processing.fill_outliers_with_median(data)
-            else:
-                st.write(f"No dataset found for {district}. Please check the file path.")
+            # st.write(dataset_path)
+            data = pd.read_csv(dataset_path)
+            data['date'] = pd.to_datetime(data['date'])
+            data.set_index('date', inplace=True)
+            numeric_columns = ['GWETPROF', 'GWETTOP', 'GWETROOT', 'CLOUD_AMT', 'TS', 'PS', 'RH2M', 'QV2M', 'PRECTOTCORR', 'T2M_MAX', 'T2M_MIN', 'T2M_RANGE', 'WS2M']
+            data = data[numeric_columns].dropna()
+            data = data_processing.fill_outliers_with_median(data)
+            # if os.path.exists(dataset_path):
+                # st.write(dataset_path)
+                # data = pd.read_csv(dataset_path)
+                # data['date'] = pd.to_datetime(data['date'])
+                # data.set_index('date', inplace=True)
+                # numeric_columns = ['GWETPROF', 'GWETTOP', 'GWETROOT', 'CLOUD_AMT', 'TS', 'PS', 'RH2M', 'QV2M', 'PRECTOTCORR', 'T2M_MAX', 'T2M_MIN', 'T2M_RANGE', 'WS2M']
+                # data = data[numeric_columns].dropna()
+                # data = data_processing.fill_outliers_with_median(data)
+            # else:
+                # st.write(f"No dataset found for {district}. Please check the file path.")
         if "processing" not in st.session_state:
             st.session_state.processing = False
         # Create a placeholder for the button
@@ -278,8 +295,9 @@ elif choose == "Retrain Model":
                 st.session_state.processing = True
                 button_placeholder.empty()  # Hide the button during task
                 # with st.spinner("Please Wait, Training Model..."):
-                with st.status("Please Wait, Training Model...", expanded=True):
-                    # model_training.retrain_model_function(district_selected, dataset_paths)
-                    executor.submit(model_training.retrain_model_function(district_selected, dataset_paths))
+                with st.status("Please Wait, Training Model...", expanded=True) as status:
+                    # executor.submit(model_training.retrain_model_function(district_selected, dataset_paths))
+                    model_training.retrain_model_function(district_selected, dataset_paths)
                     st.session_state.processing = False  # Reset the processing flag
                     button_placeholder.button("Retrain", key="run_task_button_complete")
+                    status.update(label="Training complete!", state="complete", expanded=True)
