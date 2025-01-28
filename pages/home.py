@@ -24,6 +24,9 @@ display:none !important;
 .st-emotion-cache-19ee8pt{
 display:none !important;
 }
+._profileContainer_gzau3_53{
+display:none !important;
+}
 </style>
 """
 st.markdown(custom_css, unsafe_allow_html=True)
