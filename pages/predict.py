@@ -1,0 +1,178 @@
+from  PIL import Image
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import MinMaxScaler
+from streamlit_option_menu import option_menu
+from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.layers import LSTM, Dense, Dropout
+from tensorflow.keras.models import load_model, Sequential
+from tensorflow.keras.optimizers import Adam
+import io 
+import joblib
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+import pandas as pd
+import plotly.express as px
+import streamlit as st
+import streamlit.components.v1 as html
+import tensorflow as tf
+import time
+import math
+import data_processing
+import prediction
+from PIL import Image
+from huggingface_hub import snapshot_download
+path = snapshot_download("abatejemal/3_Models")
+ohe_loaded = joblib.load(f'{path}/transform_ohe.pkl')
+df = pd.read_csv('bbox_and_commons.csv')
+districts = df['district'].tolist()
+# Folder containing district CSV files
+data_folder = "2_Data/WeatherData/"
+st.subheader("Yield Prediction Interface", divider=True)
+district_selected = st.selectbox(
+	"SELECT DISTRICT",
+	districts,
+	index=None,
+	placeholder="--Select--",
+)
+time_steps = 365
+custom_css="""
+<style>
+header{
+display:none !important;
+}
+
+.st-emotion-cache-6qob1r{
+
+display:none !important;
+}
+.stSidebar{
+display:none !important;
+}
+.st-emotion-cache-19ee8pt{
+display:none !important;
+}
+._profileContainer_gzau3_53{
+display:none !important;
+}
+</style>
+"""
+st.markdown(custom_css, unsafe_allow_html=True)
+# Load dataset if districts are selected
+if district_selected:
+	# for district, dataset_path in zip(district_selected, dataset_paths):
+	
+	district=district_selected
+	# dataset_paths = f"2_Data/WeatherData/{district}.csv"
+	dataset_paths =f"https://huggingface.co/datasets/abatejemal/2_Data/resolve/main/WeatherData/{district}.csv"
+	dataset_path=dataset_paths
+	model_paths = f"3_Models/weather_models/{district}_lstm_model.h5"
+	scaler_paths = f"3_Models/weather_models/{district}_scaler.pkl"
+	# if os.path.exists(dataset_path):
+		
+	data = pd.read_csv(dataset_path)
+	data['date'] = pd.to_datetime(data['date'])
+	data.set_index('date', inplace=True)
+	numeric_columns = ['GWETPROF', 'GWETTOP', 'GWETROOT', 'CLOUD_AMT', 'TS', 'PS', 'RH2M', 'QV2M', 'PRECTOTCORR', 'T2M_MAX', 'T2M_MIN', 'T2M_RANGE', 'WS2M']
+	data = data[numeric_columns].dropna()
+	
+	data = data_processing.fill_outliers_with_median(data)
+	# else:
+		# st.write(f"No dataset found for {district}. Please check the file path.")
+	selected_season = st.selectbox(
+	"SELECT SEASON",
+	("Meher", "Belg"),
+	index=None,
+	placeholder="--Select--",
+	)
+	if selected_season==None:
+		st.session_state.processing = True
+	else:
+		st.session_state.processing = False
+	area = st.number_input("Enter Area(sq.m)", min_value=10, max_value=4000)
+	# Function to predict the next 30 days
+	
+	if "processing" not in st.session_state:
+		st.session_state.processing = False
+	# Create a placeholder for the button
+	button_placeholder = st.empty()
+
+	# Show the button only if not processing
+	if not st.session_state.processing:
+		# Show the button with a unique key using a combination of the processing status
+		
+		if button_placeholder.button("Predict", key="run_task_button_visible"):
+			st.session_state.processing = True
+			button_placeholder.empty()  # Hide the button during task
+			# if os.path.exists(model_paths) and os.path.exists(scaler_paths):
+			# Display processing message and progress bar
+			
+			progress_bar = st.progress(0)
+			# Scale the data
+			# scaler = joblib.load(scaler_paths)
+			# data_scaled = scaler.transform(data)
+			
+			predictions = prediction.predict_next_30_days(district_selected, data, time_steps, days=90, progress_bar=progress_bar)
+
+			# Convert predictions to DataFrame
+			predicted_df = pd.DataFrame(predictions, columns=['GWETPROF', 'GWETTOP', 'GWETROOT', 'CLOUD_AMT', 'TS', 'PS', 'RH2M', 'QV2M', 'PRECTOTCORR', 'T2M_MAX', 'T2M_MIN', 'T2M_RANGE', 'WS2M'])
+			# st.write(f"Predicted Values for the Next 30 Days for {district_selected}:")
+			mean_predicted_df = predicted_df.mean(numeric_only=True)
+			# Append the mean row while retaining non-numeric columns
+			mean_row = pd.DataFrame([mean_predicted_df.tolist()], columns=predicted_df.columns)
+			# df1 = pd.read_csv('bbox_and_commons.csv')
+			# filtered_df1 = df1[df1['district'] == district_selected[0]]
+			filtered_df = df[df['district'] == district_selected]
+			filtered_df = filtered_df.reset_index(drop=True)
+			# important_columns = ['elevation', 'slope', 'soc', 'soilph']
+			# filtered_df = filtered_df[important_columns]
+			
+			mean_row['elevation']=filtered_df['elevation']
+			mean_row['slope']=filtered_df['slope']
+			mean_row['soc']=filtered_df['soc']
+			mean_row['soilph']=filtered_df['soilph']
+			mean_row['area(sq.m)']=area
+			mean_row['season']=selected_season
+			
+			# mean_row = mean_row[important_columns]
+			# final_df = pd.concat([mean_row, filtered_df], ignore_index=True)
+			# st.write(final_df.round(2))
+			# st.write(mean_row.round(2))
+			
+			important_columns=['season','crop', 'area(sq.m)', 'GWETPROF', 'GWETTOP', 'GWETROOT', 'CLOUD_AMT', 'TS', 'PS', 'RH2M', 'QV2M', 'PRECTOTCORR', 'T2M_MAX', 'T2M_MIN', 'T2M_RANGE', 'WS2M', 'elevation', 'slope', 'soc', 'soilph']
+			ch=pd.DataFrame()
+			crop_categories = ohe_loaded.categories_[0] 
+			for crop in crop_categories:
+				d=mean_row
+				d['crop'] = crop
+				# d.insert(1, 'crop', crop)
+				ch=pd.concat([ch,d])
+			final = ch[important_columns]
+			final=final.reset_index(drop=True)
+			encoded_final = ohe_loaded.transform(final[['crop', 'season']])
+			encoded_final = pd.DataFrame(encoded_final.toarray(), 
+					  columns=[f"{val}" for cat, vals in zip(ohe_loaded.feature_names_in_, ohe_loaded.categories_) for val in vals])
+			final_df = pd.concat([final[['area(sq.m)', 
+		   'GWETPROF', 'GWETTOP', 'GWETROOT', 'CLOUD_AMT', 
+		   'TS', 'PS', 'RH2M', 'QV2M', 'PRECTOTCORR', 'T2M_MAX', 
+		   'T2M_MIN', 'T2M_RANGE', 'WS2M', 'elevation', 'slope', 'soc', 'soilph',
+					   ]], encoded_final], axis=1)
+			# st.write(final_df)
+			final=final_df
+			# predicted_df = predict_crop_yield(final, progress_bar=progress_bar)
+			with st.spinner("Generating Result..."):
+				predicted_df = prediction.predict_crop_yield1(final, encoded_final, ohe_loaded)
+			season=predicted_df['season'].tolist()
+			tstr = f'Predicted Production in District: {district_selected}   Season: {season[0]}'
+			st.success("Prediction Done!")
+			# Plotting the predictions
+			fig = plt.figure(figsize=(10, 6))
+			ax = fig.add_axes([0, 0, 1, 1])
+			ax.set_title(tstr, fontsize=15)
+			ax.set_ylabel('Production', fontsize=14)
+			ax.set_xlabel('Crop', fontsize=13)
+			ax.bar(predicted_df['crop'][:8], predicted_df['Predicted'][:8])
+			st.pyplot(fig)
+			# st.dataframe(predicted_df)
+			st.session_state.processing = False  # Reset the processing flag
+			button_placeholder.button("Predict", key="run_task_button_complete")
