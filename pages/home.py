@@ -33,17 +33,26 @@ display:none !important;
 ._profileContainer_gzau3_53{
 display:none !important;
 }
+
+footer {
+	
+	visibility: hidden;
+	
+	}
+footer:after {
+	content:'goodbye'; 
+	visibility: visible;
+	display: block;
+	position: relative;
+	#background-color: red;
+	padding: 5px;
+	top: 2px;
+}
 </style>
 """
 st.markdown(custom_css, unsafe_allow_html=True)
 
-hide_streamlit_style = """
-            <style>
-            [data-testid="stToolbar"] {visibility: hidden !important;}
-            footer {visibility: hidden !important;}
-            </style>
-            """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 
 st.subheader("ML Based Crop Yield Prediction", divider=True)
 st.markdown("""
