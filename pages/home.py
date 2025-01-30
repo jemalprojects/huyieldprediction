@@ -13,12 +13,12 @@ custom_css="""
 header{
 display:none !important;
 }
-footer {
-display:none !important;
-}
 
-div._profileContainer_gzau3_53 {
-display: none !important;
+.css-d1b1ld.edgvbvh6{
+visibility:hidden;
+}
+.css-1v8iw71.eknhn3m4{
+visibility:hidden;
 }
 .st-emotion-cache-6qob1r{
 display:none !important;
