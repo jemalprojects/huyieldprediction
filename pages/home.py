@@ -13,7 +13,8 @@ custom_css="""
 header{
 display:none !important;
 }
-
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
 .css-d1b1ld.edgvbvh6{
 visibility:hidden;
 }
