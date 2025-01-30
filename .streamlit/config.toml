@@ -4,13 +4,15 @@ base="light"
 # [browser]
 # gatherUsageStats = false
 
-# [ui]
-# hideSidebarNav = false  # Optionally hide the sidebar navigation.
+[ui]
+hideSidebarNav = true  # Optionally hide the sidebar navigation.
 # customMenuItems = false # Removes extra menu items.
 
-# [global]
-# showFooter = false
+[global]
+showFooter = false
 
 [server]
 # Set the maximum idle time (in seconds) before a session expires
 maxSessionIdleTimeout = 7200  # Example: 1 hour timeout
+
+
