@@ -16,7 +16,12 @@ display:none !important;
 footer {
 display:none !important;
 }
-
+-_profileContainer_gzau3_53{
+display:none !important;
+}
+a{
+display:none !important;
+}
 .st-emotion-cache-6qob1r{
 
 display:none !important;
