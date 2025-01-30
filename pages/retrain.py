@@ -19,7 +19,7 @@ import tensorflow as tf
 import time
 import math
 import data_processing
-import prediction
+import model_training
 from PIL import Image
 from huggingface_hub import snapshot_download
 
