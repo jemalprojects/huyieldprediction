@@ -15,4 +15,7 @@ showFooter = false
 # Set the maximum idle time (in seconds) before a session expires
 maxSessionIdleTimeout = 7200  # Example: 1 hour timeout
 
+[client]
+toolbarMode=false
+showSidebarNavigation=false
 
