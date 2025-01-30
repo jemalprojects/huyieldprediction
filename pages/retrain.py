@@ -21,8 +21,31 @@ import math
 import data_processing
 import prediction
 from PIL import Image
-
 from huggingface_hub import snapshot_download
+
+custom_css="""
+<style>
+header{
+display:none !important;
+}
+
+.st-emotion-cache-6qob1r{
+
+display:none !important;
+}
+.stSidebar{
+display:none !important;
+}
+.st-emotion-cache-19ee8pt{
+display:none !important;
+}
+._profileContainer_gzau3_53{
+display:none !important;
+}
+</style>
+"""
+st.markdown(custom_css, unsafe_allow_html=True)
+
 st.subheader("Retrain Model Interface", divider=True)
 df = pd.read_csv('bbox_and_commons.csv')
 districts = df['district'].tolist()
