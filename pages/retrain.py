@@ -24,6 +24,8 @@ from PIL import Image
 
 from huggingface_hub import snapshot_download
 st.subheader("Retrain Model Interface", divider=True)
+df = pd.read_csv('bbox_and_commons.csv')
+districts = df['district'].tolist()
 district_selected = st.multiselect("Select Districts", districts)
 # url=f"https://huggingface.co/datasets/abatejemal/2_Data/resolve/main/WeatherData/{district}.csv"
 # dataset_paths = [f"2_Data/WeatherData/{district}.csv" for district in district_selected]
