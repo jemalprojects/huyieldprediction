@@ -6,11 +6,14 @@ st.set_page_config(
     page_title="Crop Yield Prediction",
     # page_icon="🌾",
     page_icon=icon,
-    layout="wide"
+    # layout="wide"
 )
 custom_css="""
 <style>
 header{
+display:none !important;
+}
+footer {
 display:none !important;
 }
 
