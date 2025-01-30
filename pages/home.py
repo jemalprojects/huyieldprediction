@@ -63,22 +63,3 @@ st.markdown("""
 <p>After entering the district, season, and area, click the <span class="interactive-text">"Predict Crop Yield"</span> button to get the estimated crop yield.</p>""", unsafe_allow_html=True)
 
 
-custom_css1="""
-<style>
-footer {
-	
-	visibility: hidden;
-	
-	}
-footer:after {
-	content:'goodbye'; 
-	visibility: visible;
-	display: block;
-	position: relative;
-	#background-color: red;
-	padding: 5px;
-	top: 2px;
-}
-</style>
-"""
-st.markdown(custom_css1, unsafe_allow_html=True)
